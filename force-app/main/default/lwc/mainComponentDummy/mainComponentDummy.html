@@ -1,0 +1,183 @@
+<template>
+    <!-- <lightning-card> -->
+    <article class="slds-card slds-card_boundary">
+        <div class="main-component">
+        <template if:true={showSetup}>
+            <div class="slds-clearfix slds-border_bottom">
+                <div class="slds-float_left image">
+                    <!-- <img src={ASC_logo} style="width: 80px ; height: 80px;"/> -->
+                      <img src={imageUrl} style="width: 80px ; height: 80px;"/>   
+                </div>
+            </div>
+            <template if:true={showSetup}>
+                <div class="slds-align_absolute-center slds-p-around_medium slds-m-vertical_medium slds-m-horizontal_medium " id='setup'>
+                    <lightning-button variant="brand" label="Setup" icon-name="utility:setup" icon-position="center" onclick={handleClick} value={checkFolder}></lightning-button>
+                    <!-- <h1>Link this record with a folder in SharePoint</h1> -->
+                </div>
+                <div class="slds-align_absolute-center slds-m-vertical_medium slds-m-horizontal_medium">
+                    <h1>Link this record with a folder in SharePoint</h1>
+                </div>
+            </template>
+        </template>
+        <template if:false={showSetup}>
+            <div id='Main'>
+                <div class="slds-grid slds-wrap">
+                    
+                    <div class="slds-col slds-size_1-of-5 slds-m-vertical_auto slds-m-horizontal_auto image"> 
+                        <img src={imageUrl}  style="width: 80px ; height: 80px;"/>                                                      
+                </div> 
+            <!-- =============================== SEARCH BAR ===================================== -->
+                        
+                <div class="slds-col slds-size_4-of-5 slds-border_left">
+                    <!-- <div class="slds-border_left"> borderTable -->
+                        <!-- <div class="slds-border_bottom">multiple-rows="true" slds-m-top_xx-small-->
+                    <lightning-layout horizontal-align="end">
+                        <div class="slds-m-horizontal_small slds-m-vertical_small slds-m-top_small">
+                            <lightning-layout-item size="4" small-device-size="4" medium-device-size="4" large-device-size="4">
+                                <c-search search-bar={searchBar} onprogressvaluechange={hanldeProgressValueChange}  ></c-search>
+                            </lightning-layout-item> 
+                        </div>                        
+                    </lightning-layout>  
+                    <!-- <div class="slds-border_top"> -->
+                    <lightning-breadcrumbs class="breadcrumb slds-border_bottom slds-border_top slds-p-left_x-small"> 
+                        <template for:each={myBreadcrumb} for:item="crumbs">
+                            <lightning-breadcrumb key={crumbs.id} label={crumbs.label} name={crumbs.name} onclick={handleNavigateTo}  > </lightning-breadcrumb>
+                        </template>
+                        
+                    </lightning-breadcrumbs> 
+                            <!-- </div> -->
+                        <!-- </div>  -->
+                    <!-- </div>  -->
+                </div>
+                <div class="slds-col slds-size_1-of-5 slds-border_top">
+                
+                        <lightning-vertical-navigation selected-item="selectedItem" onselect={handleSelect} class="navigation">               
+                            <lightning-vertical-navigation-section>                         
+                                <lightning-vertical-navigation-item-icon label="New Folder" name="isNewfolder" icon-name="utility:new" > </lightning-vertical-navigation-item-icon>
+                                <lightning-vertical-navigation-item-icon label="Upload File" name="upload" icon-name="utility:upload" ></lightning-vertical-navigation-item-icon>
+                                <lightning-vertical-navigation-item-icon label="Open SP Site" target='_blank' name="open_sharepoint" icon-name="utility:new_window" onclick={openInSharePoint}></lightning-vertical-navigation-item-icon> 
+                            </lightning-vertical-navigation-section>   
+                        </lightning-vertical-navigation>                        
+                </div>
+        <!--  Bread Crumbs / Traversing and DataTable style="height:100%" -->
+             <div class="slds-col slds-size_4-of-5 slds-border_left slds-is-relative" >
+                <!-- <div class="slds-border_left"> -->
+                     <span>     
+                        <div class="myTable ">
+                            <!--lightning-datatable key-field="id" columns={columns} data={data} errors={errors} onrowaction={handleRowAction} hide-checkbox-column></lightning-datatable  column-widths-mode="auto" resize-column-disabled-->
+                            <lightning-datatable key-field="id" columns={columns} data={recordToDisplay} errors={errors} onrowaction={handleRowAction} resize-column-disabled hide-checkbox-column></lightning-datatable> 
+                            
+                            <div class="slds-text-body_small slds-text-color_error"> 
+                                <template if:true={showLoadingSpinner1}>
+                                    <lightning-spinner alternative-text="Uploading......" size="medium"></lightning-spinner>
+                                </template>
+                            </div>                     
+                        </div>
+                        <template if:true={norecordsToDisplay}>
+                            <p class="slds-text-heading_small slds-hyphenate norecords">No records to display</p>
+                        </template>
+                        <template if:true={showPagination}>
+                            <div class="pagination-buttons slds-m-bottom_small">
+                                <lightning-button label="Previous" icon-name="utility:chevronleft" onclick={handleClickButtons}></lightning-button>
+                                <p> Page {pageNo} of {totalPage}</p>
+                                <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={handleClickButtons}></lightning-button>
+                            </div> 
+                        </template> 
+                     </span> 
+                </div>
+            </div>
+       
+        <!-- </lightning-layout> -->
+    
+        <!-- ============================================ Create New Folder========================== -->
+        <template if:true={closedModel}>
+            <!-- Modal/Popup Box LWC body starts here -->
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+                <!-- <c-new-folder close-model={closedModel} selected-folder={selectedFolder} -share-point-folder-id={sharePointFolderId} onfolderclosemodalvalue={handleFolderCloseModalValue} wired-activities={wiredActivities} ></c-new-folder> -->
+                <c-new-folder selected-folder={selectedFolder} closed-model={closedModel} -share-point-folder-id={sharePointFolderId} onclosemodalvalue={handleClosedModelValue} onfolderclosemodalvalue={handleFolderCloseModalValue} total-rec={totalRec} my-breadcrumb={myBreadcrumb} ></c-new-folder>  
+            </div>
+        </template>
+
+        <!-- ============================================ Upload File ==================================== -->
+        
+        <template if:true={uploadSmallFile}>
+            <div style="border: 1px dashed white; margin: 20px;">
+                <c-upload-file-orchestration upload-small-file={uploadSmallFile} selected-folder={selectedFolder} -share-point-folder-id={sharePointFolderId} share-point-id ={sharePointId} onuploadfileclosemodalvalue ={handleUploadFileCloseModalValue}  onuploadfilevalue ={handleUploadFileResponseValue}  my-breadcrumb={myBreadcrumb}> </c-upload-file-orchestration>
+            </div>
+        </template>
+        <!-- =========================================Rename================================= -->
+    <template if:true={reNameModel}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="modal-heading-01" aria-modal="true" aria-hidden="true" aria-describedby="modal-content-id-6">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-06" class="slds-text-heading_medium slds-hyphenate ">Rename Folder</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here slds-p-around_medium-->
+                <div class="slds-modal__content  slds-is-relative" id="modal-content-id-6">
+                    <lightning-input type="text" class="slds-p-around_medium" name="rename_name" label="Rename" placeholder="Rename File/Folder" value={renamedvalue} onchange={handleTextChange}>
+                    </lightning-input>
+                    <div class="slds-text-body_small slds-text-color_error"> 
+                        <template if:true={showLoadingSpinner}>
+                            <lightning-spinner alternative-text="Uploading......" size="medium"></lightning-spinner>
+                        </template>
+                    </div>
+                
+                <!-- Modal/Popup Box LWC footer starts here -->
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_brand" onclick={rename_method} title="Rename" >Rename</button>
+                    <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
+                </footer>
+            </div>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template if:true={deleteModel}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="modal-heading-01" aria-modal="true" aria-hidden="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-0" class="slds-text-heading_medium slds-hyphenate">Delete a file/folder</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-is-relative" id="modal-content-id">
+                    <h2 class="slds-text-heading_small slds-hyphenate slds-p-around_medium ">Are you sure you want to delete it? </h2>
+                    <div class="slds-text-body_small slds-text-color_error"> 
+                        <template if:true={showLoadingSpinner}>
+                            <lightning-spinner alternative-text="Uploading......" size="medium"></lightning-spinner>
+                        </template>
+                    </div>
+                
+                <!-- Modal/Popup Box LWC footer starts here -->
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_destructive" onclick={delete_method} title="Delete">Delete</button>
+                    <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
+                </footer>
+            </div>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    </div>
+
+    </template>
+</div>
+</article>
+<!-- </lightning-card> -->
+</template>

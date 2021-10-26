@@ -1,0 +1,15 @@
+<template> 
+    <lightning-card>
+        <c-azure-search records-to-display={recordsToDisplay}></c-azure-search>
+        <div style="height: 300px;">
+            <lightning-datatable
+                    key-field="id"
+                    data={visibleRecs}
+                    columns={columns}> 
+            </lightning-datatable>
+        </div> 
+        <div slot="footer" class="slds-var-m-horizontal_medium">
+            <c-pagination records={recordsToDisplay} onupdate={updateHandler}></c-pagination>
+        </div>
+    </lightning-card>   
+</template>

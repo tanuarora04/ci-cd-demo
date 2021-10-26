@@ -1,0 +1,43 @@
+<template>
+    <lightning-card>
+        <div class="slds-var-m-around_medium">
+        <div class="slds-form-element slds-align_absolute-center">
+            <label class="slds-checkbox_toggle">
+            <span class="slds-form-element__label slds-m-bottom_none">Active/Inactive Users</span>
+            <lightning-input type='checkbox' name="checkbox-toggle-15" value="checkbox-toggle-15" aria-describedby="checkbox-toggle-15" onchange={handleChange} checked></lightning-input>
+            <!-- <input type="checkbox" name="checkbox-toggle-15" value="checkbox-toggle-15" aria-describedby="checkbox-toggle-15" checked="{}" onchange={handleChange}/> -->
+            <!-- <span id="checkbox-toggle-15" class="slds-checkbox_faux_container" aria-live="assertive">
+                <span class="slds-checkbox_faux"></span>
+                <span class="slds-checkbox_on">Active</span>
+                <span class="slds-checkbox_off">Inactive</span>
+            </span> -->
+            </label>
+        </div> 
+        <div class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none">
+            <lightning-layout multiple-rows>
+            <template for:each={values} for:item="userValues" for:index="index">
+                <lightning-layout-item size="3" class="slds-p-around_small slds-m-horizontal_none" key={Id}>
+                    <img src={userValues.FullPhotoUrl} key={Id}/>
+                </lightning-layout-item>
+                <lightning-layout-item size="3" class="slds-m-top_xx-large slds-m-horizontal_none slds-truncate" key={Id}>
+                    {userValues.Name}<br/>
+                    {userValues.Email}<br/>
+                    {userValues.Phone}
+                </lightning-layout-item>
+            </template>
+        </lightning-layout> 
+        </div>
+    </div>
+    </lightning-card> 
+</template>
+
+
+
+<!-- </lightning-layout> -->
+                <!-- <div class="slds-grid slds-gutters" key={Id}>
+                    <div class="slds-col">
+                        <img src={userValues.FullPhotoUrl} key={Id}/>
+                        <br/>
+                        {userValues.Name}
+                    </div>
+                </div> -->

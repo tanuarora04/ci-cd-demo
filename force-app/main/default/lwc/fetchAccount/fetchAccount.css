@@ -1,0 +1,11 @@
+.fetchName{
+    width:70%;
+    /* float:left; */
+    display: inline-block;
+}
+
+.extensionVal{
+    width:20%;
+    display:inline-block;
+    /* float:left; */
+}

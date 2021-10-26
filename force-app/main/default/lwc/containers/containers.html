@@ -1,0 +1,51 @@
+<template>
+    <article class="slds-card slds-card_boundary">
+        <div class="slds-clearfix slds-border_bottom">
+            <div class="slds-float_left">
+                <img src={ASC_logo} style="max-height: 85px;"/> 
+            </div>
+        </div>
+        <template if:true={showSetup}>
+            <div class="slds-align_absolute-center slds-p-around_medium slds-m-vertical_medium slds-m-horizontal_medium " id='setup'>
+                <lightning-button variant="brand" label="Setup" icon-name="utility:setup" icon-position="center" onclick={createRecordContainer} value={checkFolder}></lightning-button>
+            </div>
+            <div class="slds-align_absolute-center slds-m-vertical_small slds-m-horizontal_medium">
+                <h1>Link this record with a container in Azure</h1>
+            </div>
+        </template>
+        <template if:true={showPopUp}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="modal-heading-01" aria-modal="true" aria-hidden="true" aria-describedby="modal-content-id-6">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box LWC header here -->
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="modal-heading-06" class="slds-text-heading_medium slds-hyphenate ">Create Container</h2>
+                    </header>
+                    <!-- Modal/Popup Box LWC body starts here slds-p-around_medium-->
+                    <div class="slds-modal__content  slds-is-relative" id="modal-content-id-6">
+                        <lightning-input type="text" class="slds-p-around_medium fetchName" name="create_container" label="Enter Container Name" placeholder="Container Name" value={containerName} onchange={handleValueChange}></lightning-input>
+                        <template if:false={showError}>
+                            <p style="color:rgb(204, 12, 12)" class="slds-p-around_medium">
+                                This name may only contain lowercase letters, numbers, and hyphens, and must begin with a letter or a number. Each hyphen must be preceded and followed by a non-hyphen character. The name must also be between 3 and 63 characters long.
+                            </p>
+                        </template>
+                        <div class="slds-text-body_small slds-text-color_error"> 
+                            <template if:true={showLoadingSpinner}>
+                                <lightning-spinner alternative-text="Creating......" size="medium"></lightning-spinner>
+                            </template>
+                        </div>
+                        <!-- Modal/Popup Box LWC footer starts here -->
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button_brand" onclick={containerCreation} title="Create" >Create</button>
+                            <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
+                        </footer>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+    </article>
+</template>
